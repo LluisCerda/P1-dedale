@@ -6,7 +6,6 @@ import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.OneShotBehaviour;
-import jade.core.behaviours.TickerBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.SearchConstraints;
@@ -30,7 +29,7 @@ public class LabAgentCollector extends AbstractDedaleAgent {
                 dfd.setName(getAID());
                 ServiceDescription sd = new ServiceDescription();
                 sd.setName("LluisCollector");
-                sd.setType("recolector");
+                sd.setType("collector");
                 dfd.addServices(sd);
                 try {
                     DFService.register(myAgent, dfd);
@@ -40,6 +39,7 @@ public class LabAgentCollector extends AbstractDedaleAgent {
             }
         });
 
+        /*
         lb.add(new CyclicBehaviour() {
             @Override
             public void action() {
@@ -64,6 +64,7 @@ public class LabAgentCollector extends AbstractDedaleAgent {
 
             }
         });
+        */
 
         lb.add(new CyclicBehaviour() {
             @Override

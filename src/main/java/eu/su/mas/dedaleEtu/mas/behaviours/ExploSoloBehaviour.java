@@ -41,8 +41,8 @@ public class ExploSoloBehaviour extends SimpleBehaviour {
      */
     private final Set<String> closedNodes;
 
-    public ExploSoloBehaviour(final AbstractDedaleAgent myagent, MapRepresentation myMap) {
-        super(myagent);
+    public ExploSoloBehaviour(final AbstractDedaleAgent myAgent, MapRepresentation myMap) {
+        super(myAgent);
         this.myMap = myMap;
         this.openNodes = new ArrayList<>();
         this.closedNodes = new HashSet<>();
@@ -67,7 +67,7 @@ public class ExploSoloBehaviour extends SimpleBehaviour {
                 e.printStackTrace();
             }
 
-            //1) remove the current node from openlist and add it to closedNodes.
+            //1) remove the current node from openList and add it to closedNodes.
             this.closedNodes.add(myPosition);
             this.openNodes.remove(myPosition);
 
@@ -92,9 +92,9 @@ public class ExploSoloBehaviour extends SimpleBehaviour {
 
             //3) while openNodes is not empty, continues.
             if (this.openNodes.isEmpty()) {
-                //Explo finished
+                //Exploration finished
                 finished = true;
-                System.out.println("Exploration successufully done, behaviour removed.");
+                System.out.println("Exploration successfully done, behaviour removed.");
             } else {
                 //4) select next move.
                 //4.1 If there exist one open node directly reachable, go for it,
@@ -142,7 +142,7 @@ public class ExploSoloBehaviour extends SimpleBehaviour {
                     System.out.println(this.myAgent.getLocalName() + " - My current backpack capacity is:" + ((AbstractDedaleAgent) this.myAgent).getBackPackFreeSpace());
                 }
 
-                // END API CALL ILUSTRATION
+                // END API CALL ILLUSTRATION
                 ((AbstractDedaleAgent) this.myAgent).moveTo(new gsLocation(nextNode));
             }
         }

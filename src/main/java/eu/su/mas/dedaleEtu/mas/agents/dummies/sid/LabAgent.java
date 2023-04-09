@@ -3,8 +3,11 @@ package eu.su.mas.dedaleEtu.mas.agents.dummies.sid;
 import eu.su.mas.dedale.env.Location;
 import eu.su.mas.dedale.mas.AbstractDedaleAgent;
 import eu.su.mas.dedale.mas.agent.behaviours.platformManagment.startMyBehaviours;
+import eu.su.mas.dedaleEtu.mas.behaviours.ExploSoloBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.RandomWalkBehaviour;
 import eu.su.mas.dedaleEtu.mas.behaviours.SayHelloBehaviour;
+import eu.su.mas.dedaleEtu.mas.behaviours.SearchSoloBehaviour;
+import eu.su.mas.dedaleEtu.mas.knowledge.MapRepresentation;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.*;
@@ -17,6 +20,7 @@ import jade.lang.acl.ACLMessage;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class LabAgent extends AbstractDedaleAgent {
     static class HelloWorldBehaviour extends Behaviour {
@@ -46,6 +50,7 @@ public class LabAgent extends AbstractDedaleAgent {
         //use them as parameters for your behaviours is you want
         List<Behaviour> lb = new ArrayList<>();
 
+        //Registro de Agentes en el DF
         lb.add(new OneShotBehaviour() {
             @Override
             public void action() {
@@ -63,12 +68,15 @@ public class LabAgent extends AbstractDedaleAgent {
             }
         });
 
+        //Búsqueda de Agentes
+
         lb.add(new CyclicBehaviour() {
             @Override
             public void action() {
+
                 DFAgentDescription template = new DFAgentDescription();
                 ServiceDescription templateSd = new ServiceDescription();
-                templateSd.setType("recolector");
+                templateSd.setType("collector");
                 template.addServices(templateSd);
                 SearchConstraints sc = new SearchConstraints();
                 // We want to receive 10 results at most
@@ -81,23 +89,34 @@ public class LabAgent extends AbstractDedaleAgent {
                 }
                 if (results.length > 0) {
                     DFAgentDescription dfd = results[0];
-                    AID provider = dfd.getName();
-                    System.out.println("Found LabCollector: " + provider.toString());
+                    LabCollectorAID = dfd.getName();
+                    //System.out.println("Found LabCollector: " + provider.toString());
                 }
 
             }
         });
 
+        //Envio de mensages
         lb.add(new TickerBehaviour(this, 1000) {
             @Override
             protected void onTick() {
                 ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-                msg.addReceiver(new AID("Peter", AID.ISLOCALNAME));
+                msg.addReceiver(LabCollectorAID);
                 msg.setLanguage("English");
-                msg.setContent("Sending a new Message");
-                send(msg);
+                msg.setContent(getCurrentPosition().getLocationId());
+                msg.setSender(this.getAgent().getAID());
+                sendMessage(msg);
             }
         });
+
+        lb.add(new OneShotBehaviour() {
+            @Override
+            public void action() {
+                ASpawn = getCurrentPosition();
+            }
+        });
+
+        lb.add(new SearchSoloBehaviour(this, null));
 
         // MANDATORY TO ALLOW YOUR AGENT TO BE DEPLOYED CORRECTLY
         addBehaviour(new startMyBehaviours(this, lb));
@@ -130,4 +149,10 @@ public class LabAgent extends AbstractDedaleAgent {
     protected void afterMove() {
         super.afterMove();
     }
+
+    //AID of the agent we're searching
+    AID LabCollectorAID;
+
+    //Spawning location, saved to pass to the other agent
+    Location ASpawn;
 }
